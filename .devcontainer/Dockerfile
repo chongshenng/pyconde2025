@@ -1,4 +1,4 @@
-FROM ubuntu:24.10
+FROM ubuntu:24.04
 
 # https://code.visualstudio.com/docs/remote/containers-advanced#_creating-a-nonroot-user
 ARG USERNAME=flwr-vscode
@@ -6,8 +6,12 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 # Create the user
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+RUN if ! getent group $USER_GID; then \
+    groupadd --gid $USER_GID $USERNAME; \
+    fi && \
+    if ! id -u $USERNAME >/dev/null 2>&1; then \
+    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME; \
+    fi && \
     #
     # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
     && apt-get update \
