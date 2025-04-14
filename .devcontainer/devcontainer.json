@@ -1,0 +1,22 @@
+{
+    "name": "Flower Tutorial Dev Container",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "files.watcherExclude": {},
+                "search.exclude": {},
+                "terminal.integrated.defaultProfile.linux": "bash"
+            },
+            "extensions": [
+                "ms-python.python"
+            ]
+        }
+    },
+    "remoteUser": "flwr-vscode",
+    "mounts": [
+        "source=flwr-bashhistory,target=/commandhistory,type=volume"
+    ]
+}
