@@ -30,7 +30,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 RUN python -m pip install -U pip
 # RUN pip install flwr\[simulation\]==1.17.0
-RUN pip install 'flwr[simulation]@git+https://github.com/adap/flower.git@add-secure-conn-with-ca-cert
+RUN pip install "flwr[simulation]@git+https://github.com/adap/flower.git@add-secure-conn-with-ca-cert"
 
 USER $USERNAME
 ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
