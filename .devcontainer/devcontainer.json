@@ -18,5 +18,6 @@
     "remoteUser": "flwr-vscode",
     "mounts": [
         "source=flwr-bashhistory,target=/commandhistory,type=volume"
-    ]
+    ],
+    "postCreateCommand": "echo \"alias ls='ls -Ga'\" >> ~/.bashrc"
 }
