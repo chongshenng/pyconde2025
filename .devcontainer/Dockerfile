@@ -25,7 +25,7 @@ RUN apt-get install -y curl wget gnupg python3 python-is-python3 python3-pip git
     build-essential tmux vim python3-venv
 
 # Create and activate a virtual environment
-RUN python3 -m venv /opt/venv
+RUN python3 -m venv /opt/venv && chown -R $USERNAME:$USERNAME /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 RUN python -m pip install -U pip
