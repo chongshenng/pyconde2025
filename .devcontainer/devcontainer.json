@@ -1,8 +1,6 @@
 {
     "name": "Flower Tutorial Dev Container for PyCon DE 2025",
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
+    "image": "chongshenng/pyconde2025",
     "customizations": {
         "vscode": {
             "settings": {
