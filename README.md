@@ -162,3 +162,15 @@ In this tutorial, we used several `flwr` CLI commands including `flwr new`, `flw
 |                | Print logs from one `<run-id>`            | `flwr log <run-id> . <federation> --show` |
 
 [🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
+
+## References
+
+Here are some useful references to expand on the networking and architecture topics covered in this tutorial:
+- Flower federated learning architecture ([link](https://flower.ai/docs/framework/explanation-flower-architecture.html))
+- Flower network communication ([link](https://flower.ai/docs/framework/ref-flower-network-communication.html))
+- Quickstart Docker guides ([link](https://flower.ai/docs/framework/docker/index.html))
+
+## Community
+
+- [Join us on Slack](https://flower.ai/join-slack)
+- [Join us on Flower Discuss](https://discuss.flower.ai)
