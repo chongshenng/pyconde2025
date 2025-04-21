@@ -1,5 +1,5 @@
 {
-    "name": "Flower Tutorial Dev Container",
+    "name": "Flower Tutorial Dev Container for PyCon DE 2025",
     "build": {
         "dockerfile": "Dockerfile"
     },
