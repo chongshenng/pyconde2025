@@ -1,6 +1,11 @@
 # Flower Tutorial for PyCon DE & PyData 2025
+<a href="https://flower.ai/">
+  <img src="https://flower.ai/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fflwr-head.4d68867a.png&w=384&q=75" width="140px" alt="Flower Website"  align="right" />
+</a>
 
-This is the Flower tutorial repository for PyCon DE &amp; PyData 2025 talk "The Future of AI is Federated". It describes the prerequisites to setup your tutorial environment and outlines the 3 parts of the tutorials.
+This is the Flower tutorial repository for PyCon DE &amp; PyData 2025 talk "[The Future of AI is Federated](https://2025.pycon.de/talks/9Y9DM8/)". It describes the prerequisites to setup your tutorial environment and outlines the 3 parts of the tutorials.
+
+At the end of this README, we've included a [`flwr` CLI cheatsheet](#flwr-cli-cheatsheet) to summarize the basic commands used in this tutorial.
 
 Let's get started 🚀!
 
@@ -75,32 +80,85 @@ The templates available through `flwr new` create a relatively small simulation 
 options.num-supernodes = 10
 ```
 
-## Part 2 - Flower Simulation on a Hosted Server
+[🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
 
-In Part 1, we ran a federated learning simulation locally on your system. When experimenting with your federated learning system, it is useful to be able to run the simulations on a remote machine with more resources (such as GPUs and CPUs). To do so without directly connecting to the remote machine, we can spin up a [Flower SuperLink](https://flower.ai/docs/framework/ref-api-cli.html#flower-superlink) on it and then run `flwr run` using the address of the remote machine. In this way, you can submit multiple runs to the remote machine and let the SuperLink coordinate the executions of your submitted Flower apps. 
+## Part 2 - Flower Simulation Runtime on a Hosted Server
+
+In Part 1, we ran a federated learning simulation locally on your system. When experimenting with your federated learning system, it is useful to be able to run the simulations on a remote machine with more resources (such as GPUs and CPUs). To do so without directly connecting to the remote machine, we can spin up a [Flower SuperLink](https://flower.ai/docs/framework/ref-api-cli.html#flower-superlink) on it and then run `flwr run` using the address of the remote machine. In this way, you can submit multiple runs to the remote machine and let the SuperLink coordinate the executions of your submitted Flower apps 🤩! 
 
 > [!NOTE]
 > This section explains how you can run a Flower app on a remote server as an _authenticated user_. To access the server and try it out, please register a Flower account by going to [flower.ai](https://flower.ai/), click on the yellow "Sign Up" button on the top right corner of the webpage, and complete the sign up process.
 
-For this tutorial, we've setup a temporary SuperLink which you can connect to, which is at `xyz.flower.ai`. To use it, add a new table called `[tool.flwr.federations.pyconde]` to your `pyproject.toml`:
+For this tutorial, we've setup a temporary SuperLink which you can connect to, which is at `pyconde25.flower.ai`. To use it, add a new table called `[tool.flwr.federations.pyconde25]` to your `pyproject.toml`:
 
 ```toml
-[tool.flwr.federations.pyconde]
-address = "xyz.flower.ai"
-enable-user-auth = true
+[tool.flwr.federations.pyconde25]
+address = "pyconde25.flower.ai"  # Sets the address of the remote SuperLink
+enable-user-auth = true          # Enables user authentication
 options.num-supernodes = 10
 ```
 
 Next, ensure that you're logged in (so that you can run your Flower app in an authenticated user session), run:
 
 ```shell
-flwr login . pyconde
+flwr login . pyconde25
 ```
 
 Click on the URI and login with your credentials that you provided during the sign up process. Then, you can run the app on the remote server by doing:
 
 ```shell
-flwr run . pyconde --stream
+flwr run . pyconde25 --stream
 ```
 
-Note that the `--stream` option is to stream the logs from the Flower app. You can safely run `CTRL+C` without interrupting the execution since it is running remotely on the server. The run status can be viewed by running `flwr ls . pyconde <run_id>`.
+Note that the `--stream` option is to stream the logs from the Flower app. You can safely run `CTRL+C` without interrupting the execution since it is running remotely on the server. The run status can be viewed by running `flwr ls . pyconde25 <run_id>`.
+
+[🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
+
+## Part 3 - Flower Deployment Runtime on a Hosted Server
+
+> [!NOTE]
+> This section introduces the relevant components to run Flower in deployment without making use of node authentication. This will be presented in the next section. Read more about the [Flower Architecture](https://flower.ai/docs/framework/explanation-flower-architecture.html) in the documentation.
+
+In part 3, we'll move from the simulation/research approach and _deploy_ our Flower apps so that federated learning will take place on a cross-device setting. 
+
+To deploy your Flower app, we first need to launch the two long-running components: the server, i.e. SuperLink, and clients, i.e. SuperNodes. Both SuperLink and SuperNodes can be launched in either `--isolation subprocess` mode (the default) , or the `--isolation process` mode. The `subprocess` mode allows you to run the `ServerApp` and `ClientApp`s in the same process of the SuperLink and SuperNodes, respectively. This has the benefit of a minimal deployment since all of the app dependencies can be packaged into the SuperLink and SuperNode images. For the `process` mode, the `ServerApp` and `ClientApp` will run a separate externally-managed processes. This allows, for example, to run SuperNode and `ClientApp` in separate Docker containers with different sets of dependencies installed, allowing the SuperLink and SuperNode run with the absolute minimal image requirements.
+
+For the purposes of this tutorial, we have deployed a SuperLink for you at `91.99.49.68`.
+
+Now, in this interactive part of the tutorial, you can participate in the _first_ PyCon DE 2025 Flower federation by spinning up a SuperNode on your local machine. To do so, from the parent directory of this repo, run:
+
+```shell
+docker run \
+  -v "$(pwd)/certificates:/certificates:ro" \
+  flwr/supernode:1.18.0.dev20250403 \
+  --superlink="91.99.49.68:9092" \
+  --root-certificates /certificates/ca.crt \
+  --node-config 'num-partitions=10 partition-id=0'
+```
+
+You should be able to see the following:
+
+```shell
+INFO :      Starting Flower SuperNode
+INFO :      Starting Flower ClientAppIo gRPC server on 0.0.0.0:9094
+INFO :
+```
+
+## `flwr` CLI Cheatsheet
+
+In this tutorial, we used several `flwr` CLI commands including `flwr new`, `flwr run`, `flwr ls` and `flwr log`. A cheatsheet of all the relevant commands are shown below.
+
+> [!TIP]
+> For more details on all Flower CLI commands, please refer to the [`flwr` CLI reference](https://flower.ai/docs/framework/ref-api-cli.html#basic-commands) documentation.
+
+| Command        | Description                             | Example Usage               |
+|----------------|-----------------------------------------|-----------------------------|
+| `flwr new`     | Create a new Flower App from a template | `flwr new`                  |
+| `flwr run`     | Run the Flower App in the CWD `<.>` on the `<federation>` federation     | `flwr run . <federation>`                |
+|                | Run the Flower App and stream logs from the `ServerApp`                  | `flwr run . <federation> --stream`       |
+| `flwr ls`      | List the Run statuses on the `<federation>` federation on the SuperLink (Default) | `flwr ls . <federation>`    |
+|                | List the Run status of one `<run-id>` on the SuperLink                            | `flwr ls . <federation> --run-id <run-id>` |
+| `flwr log`     | Stream logs from one `<run-id>` (Default) | `flwr log <run-id> . <federation>` |
+|                | Print logs from one `<run-id>`            | `flwr log <run-id> . <federation> --show` |
+
+[🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
