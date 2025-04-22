@@ -72,6 +72,9 @@ cd path/to/app_dir # the directory where the pyproject.toml is
 flwr run .
 ```
 
+> [!TIP]
+> This section uses one of the pre-built templates available in the Flower platform. Learn more about other quickstart tutorials in [quickstart documentation](https://flower.ai/docs/framework/tutorial-quickstart.html).
+
 ### Overriding the `run-config`
 
 The Run config sets hyperparameters for your app at runtime. These are defined in the `[tool.flwr.app.config]` section of your app's `pyproject.toml`, which you can extend. The run config can be overridden directly from the CLI:
@@ -91,6 +94,20 @@ The templates available through `flwr new` create a relatively small simulation 
 options.num-supernodes = 10
 ```
 
+You can make your simulation larger (as large as you want!) by increasing the number of supernodes. Additionally, you can control how many compute and memory resources these get assigned. Let's do this by defining a new federation that we'll name `"simulation-xl"` (note that you can choose any other name):
+
+```toml
+[tool.flwr.federations.simulation-xl]
+options.num-supernodes = 200
+options.backend.client-resources.num-cpus = 1 # each ClientApp assumes to use 1 CPU
+```
+
+Then, to run the app on this new federation you execute (the second argument to [flwr run](https://flower.ai/docs/framework/ref-api-cli.html#flwr-run) indicates the federation to use):
+
+```shell
+flwr run . simulation-xl
+```
+
 [🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
 
 ## Part 2 - Flower Simulation Runtime on a Remote SuperLink
@@ -104,7 +121,7 @@ In Part 1, we ran a federated learning simulation locally on your system. When e
 > [!NOTE]
 > This section explains how you can run a Flower app on a remote server as an _authenticated user_. To access the server and try it out, please register a Flower account by going to [flower.ai](https://flower.ai/), click on the yellow "Sign Up" button on the top right corner of the webpage, and complete the sign up process.
 
-For this tutorial, we've setup a temporary SuperLink which you can connect to, which is at `pyconde25.flower.ai`. You can also try to create and run other templates from `flwr new`. The list of supported templates that have been preinstalled in this SuperLink is:  PyTorch, TensorFlow, sklearn, JAX, and NumPy. To use the remote SuperLink, add a new table called `[tool.flwr.federations.pyconde25]` to your `pyproject.toml`:
+For this tutorial, we've setup a temporary SuperLink which you can connect to, which is at `pyconde25.flower.ai`. You can also try to create and run other templates from `flwr new`. The list of supported templates that have been preinstalled in this SuperLink is:  PyTorch, TensorFlow, sklearn, JAX, and NumPy. To use the remote SuperLink, add a new federation table called `[tool.flwr.federations.pyconde25]` to your `pyproject.toml`:
 
 ```toml
 [tool.flwr.federations.pyconde25]
@@ -165,6 +182,10 @@ INFO :      Starting Flower SuperNode
 INFO :      Starting Flower ClientAppIo gRPC server on 0.0.0.0:9094
 INFO :
 ```
+
+> [!TIP]
+> In this section, we used the official Flower Docker images to deploy the SuperLink and the SuperNodes. Check out Flower's [Docker Hub repository](https://hub.docker.com/u/flwr) to learn about the available base and Python images. Learn more about deploying Flower with Docker in our [documentation](https://flower.ai/docs/framework/docker/index.html).
+
 
 [🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
 
@@ -313,6 +334,12 @@ Here are some useful references to expand on the networking and architecture top
 - Flower federated learning architecture ([link](https://flower.ai/docs/framework/explanation-flower-architecture.html))
 - Flower network communication ([link](https://flower.ai/docs/framework/ref-flower-network-communication.html))
 - Quickstart Docker guides ([link](https://flower.ai/docs/framework/docker/index.html))
+- Flower official Docker images ([link](https://hub.docker.com/u/flwr))
+
+And here are some links to the Flower quickstarts and tutorials.
+- Flower tutorial ([link](https://flower.ai/docs/framework/tutorial-series-what-is-federated-learning.html))
+- Flower quickstarts ([link](https://flower.ai/docs/framework/tutorial-quickstart.html))
+- Federated AI with Embedded Devices using Flower ([link](https://flower.ai/docs/examples/embedded-devices.html))
 
 [🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
 
