@@ -7,7 +7,7 @@ ARG USERNAME=flwr-vscode
 RUN useradd -m -s /bin/bash $USERNAME \
     && apt-get update \
     # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
-    && apt-get install -y sudo bash \
+    && apt-get install --no-install-recommends -y sudo bash \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
@@ -21,15 +21,14 @@ RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhisto
 
 # Install system dependencies
 RUN apt-get update
-RUN apt-get install -y curl wget gnupg python3 python-is-python3 python3-pip git \
+RUN apt-get install --no-install-recommends -y curl wget gnupg python3 python-is-python3 python3-pip git \
     build-essential tmux vim python3-venv
 
 # Create and activate a virtual environment
 RUN python3 -m venv /opt/venv && chown -R $USERNAME:$USERNAME /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-RUN python -m pip install -U pip
-RUN pip install "git+https://github.com/adap/flower.git#subdirectory=framework"
+RUN python -m pip install -U --no-cache-dir pip "git+https://github.com/adap/flower.git#subdirectory=framework"
 
 USER $USERNAME
 ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
