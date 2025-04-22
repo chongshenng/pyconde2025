@@ -141,7 +141,18 @@ Click on the URI and login with your credentials that you provided during the si
 flwr run . pyconde25 --stream
 ```
 
-Note that the `--stream` option is to stream the logs from the Flower app. You can safely run `CTRL+C` without interrupting the execution since it is running remotely on the server. The run status can be viewed by running `flwr ls . pyconde25 <run_id>`.
+Note that the `--stream` option is to stream the logs from the Flower app. You can safely run `CTRL+C` without interrupting the execution since it is running remotely on the server. The run statuses can be viewed by running:
+
+```shell
+flwr ls . pyconde25`          # View the statues of all Flower apps on the SuperLink
+flwr ls . pyconde25 <run_id>  # View the status of <run_id> on the SuperLink
+```
+
+You can also view the logs of your ongoing/completed run by running:
+
+```shell
+flwr log <run_id> . pyconde25 --stream
+```
 
 [🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
 
