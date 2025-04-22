@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - .devcontainer/Dockerfile
+      - .github/workflows/devcontainer-publish.yaml
   workflow_dispatch:
 
 env:
@@ -19,6 +20,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Lint Dockerfile with Hadolint
+        run: docker run --rm -i ghcr.io/hadolint/hadolint < .devcontainer/Dockerfile
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

@@ -24,7 +24,7 @@ If you choose the manual option to setup your tutorial environment, here are the
 - Have a Python environment (minimum is Python 3.9, but Python 3.10, 3.11, or 3.12 is recommended)
 - Have `flwr` installed:
     ```shell
-    pip install -U flwr
+    pip install -U "flwr[simulation]"
     ```
 - Have [Docker installed](https://docs.docker.com/engine/install/) on your system
 - Have an IDE, e.g. VS Code
@@ -123,13 +123,16 @@ In part 3, we'll move from the simulation/research approach and _deploy_ our Flo
 
 To deploy your Flower app, we first need to launch the two long-running components: the server, i.e. SuperLink, and clients, i.e. SuperNodes. Both SuperLink and SuperNodes can be launched in either `--isolation subprocess` mode (the default) , or the `--isolation process` mode. The `subprocess` mode allows you to run the `ServerApp` and `ClientApp`s in the same process of the SuperLink and SuperNodes, respectively. This has the benefit of a minimal deployment since all of the app dependencies can be packaged into the SuperLink and SuperNode images. For the `process` mode, the `ServerApp` and `ClientApp` will run a separate externally-managed processes. This allows, for example, to run SuperNode and `ClientApp` in separate Docker containers with different sets of dependencies installed, allowing the SuperLink and SuperNode run with the absolute minimal image requirements.
 
-For the purposes of this tutorial, we have deployed a SuperLink for you at `91.99.49.68`.
+For the purposes of this tutorial, we have deployed a SuperLink for you at `91.99.49.68`. We have also enabled secure TLS connection using self-signed certificates, which we have already generated for you.
+
+> [!CAUTION]
+> Using self-signed certificates is for testing purposes only and not recommended for production.
 
 Now, in this interactive part of the tutorial, you can participate in the _first_ PyCon DE 2025 Flower federation by spinning up a SuperNode on your local machine. To do so, from the parent directory of this repo, run:
 
 ```shell
 docker run \
-  -v "$(pwd)/certificates:/certificates:ro" \
+  --volume "$(pwd)/certificates:/certificates:ro" \
   flwr/supernode:1.18.0.dev20250403 \
   --superlink="91.99.49.68:9092" \
   --root-certificates /certificates/ca.crt \
@@ -144,6 +147,123 @@ INFO :      Starting Flower ClientAppIo gRPC server on 0.0.0.0:9094
 INFO :
 ```
 
+## Part 4 - Flower Deployment Runtime with TLS and Node Authentication
+
+> [!NOTE]
+> Part 4 will be the stretch section of the PyCon DE tutorial. Feel free to follow the tutorial in your own free time.
+
+In this section, we'll enable secure TLS connection and `SuperNode` authentication in the deployment mode. The TLS connection will be enabled between the `SuperLink` and `SuperNode`s, as well as between the Flower CLI and the `SuperLink`. For authenticated `SuperNode`s, each identity of the `SuperNode` is verified when connecting to the `SuperLink`. 
+
+> [!NOTE]
+> For more details, refer to the documentation on [enabling TLS connections](https://flower.ai/docs/framework/how-to-enable-tls-connections.html) and authenticating [`SuperNode`s](https://flower.ai/docs/framework/how-to-authenticate-supernodes.html).
+
+### Generate public and private keys
+
+In this repo, we provide a utility script called [`generate.sh`](generate.sh) and a configuration file [`certificate.conf`](certificate.conf). The script by default generates self-signed certificates for creating a secure TLS connection and three private and public key pairs for one server and two clients. The script also generates a CSV file that includes each of the generated (client) public keys. The script uses `certificate.conf`, which is a configuration file typically used by OpenSSL to generate a Certificate Signing Request (CSR) or self-signed certificates.
+
+> [!CAUTION]
+> Using self-signed certificates is for testing purposes only and not recommended for production.
+
+First, copy `generate.sh` and `certificate.conf` to your Flower App. Then, run the script: 
+
+```shell
+cp generate.sh certificate.conf path/to/app_dir
+./generate.sh
+```
+
+> [!NOTE]
+> You can generate more keys by specifying the number of client credentials that you wish to generate, as follows: `./generate.sh {your_number_of_clients}`
+
+After running the script, the following new folders and files will be generated:
+
+```shell
+awesomeapp
+├── README.md
+├── certificate.conf
+├── certificates    # Folder containing certificates for TLS connection
+│   ├── ca.crt      # *Certificate Authority (CA) certificate
+│   ├── ca.key      # Private key for CA
+│   ├── ca.srl      # Serial number file for CA
+│   ├── server.csr  # Server certificate signing request
+│   ├── server.key  # *Server private key
+│   └── server.pem  # *Server certificate
+├── generate.sh
+├── keys                          # Folder containing keys for authenticating SuperNodes
+│   ├── client_credentials_1      # Private key for client 1
+│   ├── client_credentials_1.pub  # Public key for client 1
+│   ├── client_credentials_2      # Private key for client 2
+│   ├── client_credentials_2.pub  # Public key for client 2
+│   ├── client_public_keys.csv    # *Public keys for both clients
+│   ├── server_credentials        # *Private server credentials
+│   └── server_credentials.pub    # *Public server credentials
+├── awesomeapp
+│   ├── __init__.py
+│   ├── client_app.py
+│   ├── server_app.py
+│   └── task.py
+└── pyproject.toml
+
+```
+
+The files that are preceded by asterisks `*` will be used in our deployment.
+
+### Launch `SuperLink` and `SuperNode`s with certificates and keys
+
+> [!NOTE]
+> From this point onwards, ensure that your working directory where you execute all Flower commands is in `/path/to/app_dir`. This is because the paths to the certificates and keys are relative to execution directory. Optionally, modify the paths below to absolute paths. 
+
+Launch a local instance of your `SuperLink` with additional commands.
+
+```shell
+flower-superlink \
+    --ssl-ca-certfile certificates/ca.crt \
+    --ssl-certfile certificates/server.pem \
+    --ssl-keyfile certificates/server.key \
+    --auth-list-public-keys keys/client_public_keys.csv \
+    --auth-superlink-private-key keys/server_credentials \
+    --auth-superlink-public-key keys/server_credentials.pub
+```
+
+The first three flags defines the three certificates paths: CA certificate (`--ssl-ca-certfile`), server certificate (`--ssl-certfile`) and server private key (`--ssl-keyfile`), respectively. The following three flags defines the path to a CSV file storing all known node public keys (`--auth-list-public-keys`), and the paths to the server’s private (`--auth-superlink-private-key`) and public keys (`--auth-superlink-public-key`).
+
+Next, we restart the `SuperNode`s with a secure TLS connection and authentication. Run the following command to start the first `SuperNode`:
+
+```shell
+flower-supernode \
+    --superlink="127.0.0.1:9092" \
+    --root-certificates certificates/ca.crt \
+    --auth-supernode-private-key keys/client_credentials_1 \
+    --auth-supernode-public-key keys/client_credentials_1.pub \
+    --clientappio-api-address="0.0.0.0:9094" \
+    --node-config 'num-partitions=10 partition-id=0'
+```
+
+Then, the next command to start the second `SuperNode`:
+
+```shell
+flower-supernode \
+    --superlink="127.0.0.1:9092" \
+    --root-certificates certificates/ca.crt \
+    --auth-supernode-private-key keys/client_credentials_2 \
+    --auth-supernode-public-key keys/client_credentials_2.pub \
+    --clientappio-api-address="0.0.0.0:9095" \
+    --node-config 'num-partitions=10 partition-id=1'
+```
+
+Now, we need to modify our `pyproject.toml` so that our Flower CLI will connect in a secure way to our `SuperLink`. In the `pyproject.toml`, make the following changes:
+
+```diff
+[tool.flwr.federations.pyconde]
+address = "127.0.0.1:9093"  # Point to the local SuperLink address
+- insecure = true  # Delete this line
++ root-certificates = "certificates/ca.crt" # Points to the path of the CA certificate. Must be relative to `pyproject.toml`.
+```
+
+Finally, we can launch the Run in the same way as above, but now with TLS and client authentication like this:
+
+```shell
+flwr run . pyconde --stream
+```
 ## `flwr` CLI Cheatsheet
 
 In this tutorial, we used several `flwr` CLI commands including `flwr new`, `flwr run`, `flwr ls` and `flwr log`. A cheatsheet of all the relevant commands are shown below.
