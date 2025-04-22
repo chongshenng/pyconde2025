@@ -3,7 +3,12 @@
   <img src="https://flower.ai/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fflwr-head.4d68867a.png&w=384&q=75" width="140px" alt="Flower Website"  align="right" />
 </a>
 
-This is the Flower tutorial repository for PyCon DE &amp; PyData 2025 talk "[The Future of AI is Federated](https://2025.pycon.de/talks/9Y9DM8/)". It describes the prerequisites to setup your tutorial environment and outlines the 3 parts of the tutorials.
+This is the Flower tutorial repository for PyCon DE &amp; PyData 2025 talk "[The Future of AI is Federated](https://2025.pycon.de/talks/9Y9DM8/)". It describes the prerequisites to setup your tutorial environment and outlines the 3 parts of the tutorials. It also includes a bonus part 4 that walks you through setting up a local deployment with both node and secure TLS connection:
+
+1. [Create a Flower App and run it using the Simulation Runtime](#part-1---flower-quickstart-with-pytorch)
+2. [Run a Flower App on a remote SuperLink](#part-2---flower-simulation-runtime-on-a-remote-superlink)
+3. [Deploy and run a Flower App using the Deployment Runtime and Docker](#part-3---flower-deployment-runtime-on-a-remote-superlink)
+4. [(Bonus) Deploy SuperNodes and a SuperLink with node and TLS authentication](#part-4---flower-deployment-runtime-with-tls-and-node-authentication)
 
 At the end of this README, we've included a [`flwr` CLI cheatsheet](#flwr-cli-cheatsheet) to summarize the basic commands used in this tutorial.
 
@@ -227,7 +232,7 @@ awesomeapp
 
 The files that are preceded by asterisks `*` will be used in our deployment.
 
-### Launch `SuperLink` and `SuperNode`s with certificates and keys
+###  Launch `SuperLink` and `SuperNode`s with certificates and keys
 
 > [!NOTE]
 > From this point onwards, ensure that your working directory where you execute all Flower commands is in `/path/to/app_dir`. This is because the paths to the certificates and keys are relative to execution directory. Optionally, modify the paths below to absolute paths. 
@@ -272,11 +277,10 @@ flower-supernode \
 
 Now, we need to modify our `pyproject.toml` so that our Flower CLI will connect in a secure way to our `SuperLink`. In the `pyproject.toml`, make the following changes:
 
-```diff
+```toml
 [tool.flwr.federations.pyconde]
-address = "127.0.0.1:9093"  # Point to the local SuperLink address
-- insecure = true  # Delete this line
-+ root-certificates = "certificates/ca.crt" # Points to the path of the CA certificate. Must be relative to `pyproject.toml`.
+address = "127.0.0.1:9093"                # Point to the local SuperLink address
+root-certificates = "certificates/ca.crt" # Points to the path of the CA certificate. Must be relative to `pyproject.toml`.
 ```
 
 Finally, we can launch the Run in the same way as above, but now with TLS and client authentication like this:
