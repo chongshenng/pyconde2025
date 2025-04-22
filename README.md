@@ -34,6 +34,12 @@ Additionally, install the [VS Code Containers Extension](vscode:extension/ms-vsc
 
 ## Part 1 - Flower Quickstart with PyTorch
 
+🎯 **Feature Highlights:**
+- Create a new Flower app from templates using `flwr new`
+- Start a Flower app using `flwr run`
+- Understand basic federated learning workflow with Flower
+- Customize the hyperparameters of your workflow
+
 Let's begin by creating a Flower app. This can be done easily using `flwr new` and then choosing one of the available templates. Let's use the `PyTorch` template.
 
 ```shell
@@ -82,14 +88,18 @@ options.num-supernodes = 10
 
 [🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
 
-## Part 2 - Flower Simulation Runtime on a Hosted Server
+## Part 2 - Flower Simulation Runtime on a Remote SuperLink
+
+🔐 **Feature Highlights:**
+- Login to the SuperLink using `flwr login`
+- Run a federated learning simulation remotely
 
 In Part 1, we ran a federated learning simulation locally on your system. When experimenting with your federated learning system, it is useful to be able to run the simulations on a remote machine with more resources (such as GPUs and CPUs). To do so without directly connecting to the remote machine, we can spin up a [Flower SuperLink](https://flower.ai/docs/framework/ref-api-cli.html#flower-superlink) on it and then run `flwr run` using the address of the remote machine. In this way, you can submit multiple runs to the remote machine and let the SuperLink coordinate the executions of your submitted Flower apps 🤩! 
 
 > [!NOTE]
 > This section explains how you can run a Flower app on a remote server as an _authenticated user_. To access the server and try it out, please register a Flower account by going to [flower.ai](https://flower.ai/), click on the yellow "Sign Up" button on the top right corner of the webpage, and complete the sign up process.
 
-For this tutorial, we've setup a temporary SuperLink which you can connect to, which is at `pyconde25.flower.ai`. To use it, add a new table called `[tool.flwr.federations.pyconde25]` to your `pyproject.toml`:
+For this tutorial, we've setup a temporary SuperLink which you can connect to, which is at `pyconde25.flower.ai`. You can also try to create and run other templates from `flwr new`. The list of supported templates that have been preinstalled in this SuperLink is:  PyTorch, TensorFlow, sklearn, JAX, and NumPy. To use the remote SuperLink, add a new table called `[tool.flwr.federations.pyconde25]` to your `pyproject.toml`:
 
 ```toml
 [tool.flwr.federations.pyconde25]
@@ -114,7 +124,11 @@ Note that the `--stream` option is to stream the logs from the Flower app. You c
 
 [🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
 
-## Part 3 - Flower Deployment Runtime on a Hosted Server
+## Part 3 - Flower Deployment Runtime on a Remote SuperLink
+
+🐳 **Feature Highlights**
+- Deploy SuperNode on your device using Docker
+- Enable secure TLS connection between SuperNodes and SuperLink
 
 > [!NOTE]
 > This section introduces the relevant components to run Flower in deployment without making use of node authentication. This will be presented in the next section. Read more about the [Flower Architecture](https://flower.ai/docs/framework/explanation-flower-architecture.html) in the documentation.
@@ -123,7 +137,7 @@ In part 3, we'll move from the simulation/research approach and _deploy_ our Flo
 
 To deploy your Flower app, we first need to launch the two long-running components: the server, i.e. SuperLink, and clients, i.e. SuperNodes. Both SuperLink and SuperNodes can be launched in either `--isolation subprocess` mode (the default) , or the `--isolation process` mode. The `subprocess` mode allows you to run the `ServerApp` and `ClientApp`s in the same process of the SuperLink and SuperNodes, respectively. This has the benefit of a minimal deployment since all of the app dependencies can be packaged into the SuperLink and SuperNode images. For the `process` mode, the `ServerApp` and `ClientApp` will run a separate externally-managed processes. This allows, for example, to run SuperNode and `ClientApp` in separate Docker containers with different sets of dependencies installed, allowing the SuperLink and SuperNode run with the absolute minimal image requirements.
 
-For the purposes of this tutorial, we have deployed a SuperLink for you at `91.99.49.68`. We have also enabled secure TLS connection using self-signed certificates, which we have already generated for you.
+For the purposes of this tutorial, we have deployed another SuperLink for you at `91.99.49.68`. We have also enabled secure TLS connection using self-signed certificates, which we have already generated for you.
 
 > [!CAUTION]
 > Using self-signed certificates is for testing purposes only and not recommended for production.
@@ -147,10 +161,16 @@ INFO :      Starting Flower ClientAppIo gRPC server on 0.0.0.0:9094
 INFO :
 ```
 
+[🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
+
 ## Part 4 - Flower Deployment Runtime with TLS and Node Authentication
 
+🔐 **Feature Highlights**
+- Enable node and secure TLS connection between SuperNodes and the SuperLink
+- Start SuperNodes and SuperLink via CLI
+
 > [!NOTE]
-> Part 4 will be the stretch section of the PyCon DE tutorial. Feel free to follow the tutorial in your own free time.
+> Part 4 will be the stretch section of the PyCon DE tutorial. Feel free to follow the tutorial in your own free time as you will be deploying the SuperLink and SuperNodes in your local machine.
 
 In this section, we'll enable secure TLS connection and `SuperNode` authentication in the deployment mode. The TLS connection will be enabled between the `SuperLink` and `SuperNode`s, as well as between the Flower CLI and the `SuperLink`. For authenticated `SuperNode`s, each identity of the `SuperNode` is verified when connecting to the `SuperLink`. 
 
@@ -290,7 +310,12 @@ Here are some useful references to expand on the networking and architecture top
 - Flower network communication ([link](https://flower.ai/docs/framework/ref-flower-network-communication.html))
 - Quickstart Docker guides ([link](https://flower.ai/docs/framework/docker/index.html))
 
+[🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
+
 ## Community
 
 - [Join us on Slack](https://flower.ai/join-slack)
 - [Join us on Flower Discuss](https://discuss.flower.ai)
+
+
+[🔼 Back to top](#flower-tutorial-for-pycon-de--pydata-2025)
