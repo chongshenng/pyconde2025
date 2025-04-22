@@ -181,8 +181,7 @@ docker run \
   --volume "$(pwd)/certificates:/certificates:ro" \
   flwr/supernode:1.18.0.dev20250403 \
   --superlink="91.99.49.68:9092" \
-  --root-certificates /certificates/ca.crt \
-  --node-config 'num-partitions=10 partition-id=0'
+  --root-certificates /certificates/ca.crt
 ```
 
 You should be able to see the following:
