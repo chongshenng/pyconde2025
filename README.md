@@ -20,6 +20,8 @@ The easiest way to start using this repository is to use GitHub Codespaces. The 
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=pyconde2025&repo=966052297)
 
+Additionally, you should have [Docker installed](https://docs.docker.com/engine/install/) on your system.
+
 The two alternatives to using Codespaces are:
 1. Clone this repository and run the Dev Container from your VS Code.
 2. Clone this repository and install the latest version of Flower in a new Python environment with `pip install -U "flwr[simulation]"`.
@@ -31,10 +33,7 @@ If you choose the manual option to setup your tutorial environment, here are the
     ```shell
     pip install -U "flwr[simulation]"
     ```
-- Have [Docker installed](https://docs.docker.com/engine/install/) on your system
-- Have an IDE, e.g. VS Code
-
-Additionally, install the [VS Code Containers Extension](vscode:extension/ms-vscode-remote.remote-containers).
+- Have an IDE, e.g. VS Code, and install the [VS Code Containers Extension](vscode:extension/ms-vscode-remote.remote-containers).
 
 
 ## Part 1 - Flower Quickstart with PyTorch
@@ -149,7 +148,7 @@ Note that the `--stream` option is to stream the logs from the Flower app. You c
 ## Part 3 - Flower Deployment Runtime on a Remote SuperLink
 
 🐳 **Feature Highlights**
-- Deploy SuperNode on your device using Docker
+- Deploy SuperNode on your device using Docker and connect it to a remote SuperLink
 - Enable secure TLS connection between SuperNodes and SuperLink
 
 > [!NOTE]
