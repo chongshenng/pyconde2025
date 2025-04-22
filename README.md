@@ -45,7 +45,7 @@ Additionally, install the [VS Code Containers Extension](vscode:extension/ms-vsc
 - Understand basic federated learning workflow with Flower
 - Customize the hyperparameters of your workflow
 
-Let's begin by creating a Flower app. This can be done easily using `flwr new` and then choosing one of the available templates. Let's use the `PyTorch` template.
+Let's begin by creating a Flower app. This can be done easily using `flwr new` and then choosing one of the available templates. Let's use the `NumPy` template.
 
 ```shell
 flwr new awesomeapp
@@ -56,13 +56,13 @@ The above command would create the following directory and content:
 
 ```shell
 awesomeapp
+├── README.md
 ├── awesomeapp
 │   ├── __init__.py
 │   ├── client_app.py   # Defines your ClientApp
 │   ├── server_app.py   # Defines your ServerApp
 │   └── task.py         # Defines your model, training, and data loading
-├── pyproject.toml      # Project metadata like dependencies and configs
-└── README.md
+└── pyproject.toml      # Project metadata like dependencies and configs
 ```
 
 Assuming you have already installed the dependencies for your app, you can run the app by doing:
