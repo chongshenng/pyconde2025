@@ -144,7 +144,7 @@ flwr run . pyconde25 --stream
 Note that the `--stream` option is to stream the logs from the Flower app. You can safely run `CTRL+C` without interrupting the execution since it is running remotely on the server. The run statuses can be viewed by running:
 
 ```shell
-flwr ls . pyconde25           # View the statues of all Flower apps on the SuperLink
+flwr ls . pyconde25           # View the statuses of all Flower apps on the SuperLink
 flwr ls . pyconde25 <run_id>  # View the status of <run_id> on the SuperLink
 ```
 
@@ -178,6 +178,7 @@ Now, in this interactive part of the tutorial, you can participate in the _first
 
 ```shell
 docker run \
+  --rm \
   --volume "$(pwd)/certificates:/certificates:ro" \
   flwr/supernode:1.18.0 \
   --superlink="91.99.49.68:9092" \
