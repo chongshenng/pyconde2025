@@ -144,7 +144,7 @@ flwr run . pyconde25 --stream
 Note that the `--stream` option is to stream the logs from the Flower app. You can safely run `CTRL+C` without interrupting the execution since it is running remotely on the server. The run statuses can be viewed by running:
 
 ```shell
-flwr ls . pyconde25`          # View the statues of all Flower apps on the SuperLink
+flwr ls . pyconde25           # View the statues of all Flower apps on the SuperLink
 flwr ls . pyconde25 <run_id>  # View the status of <run_id> on the SuperLink
 ```
 
