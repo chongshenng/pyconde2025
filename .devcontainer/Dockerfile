@@ -28,7 +28,7 @@ RUN apt-get install --no-install-recommends -y curl wget gnupg python3 python-is
 RUN python3 -m venv /opt/venv && chown -R $USERNAME:$USERNAME /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-RUN python -m pip install -U --no-cache-dir pip "git+https://github.com/adap/flower.git#subdirectory=framework"
+RUN python -m pip install -U --no-cache-dir pip "flwr[simulation]"
 
 USER $USERNAME
 ENV PATH="/home/$USERNAME/.local/bin:${PATH}"

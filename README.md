@@ -179,7 +179,7 @@ Now, in this interactive part of the tutorial, you can participate in the _first
 ```shell
 docker run \
   --volume "$(pwd)/certificates:/certificates:ro" \
-  flwr/supernode:1.18.0.dev20250403 \
+  flwr/supernode:1.18.0 \
   --superlink="91.99.49.68:9092" \
   --root-certificates /certificates/ca.crt
 ```
