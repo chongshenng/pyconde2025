@@ -76,7 +76,15 @@ flwr run .
 
 ### Overriding the `run-config`
 
-The Run config sets hyperparameters for your app at runtime. These are defined in the `[tool.flwr.app.config]` section of your app's `pyproject.toml`, which you can extend. The run config can be overridden directly from the CLI:
+The Run config sets hyperparameters for your app at runtime. These are defined in the `[tool.flwr.app.config]` section of your app's `pyproject.toml`, which you can extend. Let's first add another variable to the run config:
+
+```toml
+[tool.flwr.app.config]
+num-server-rounds = 3
+fraction-fit=0.5  # Add this line
+```
+
+The run config can be then be overridden directly from the CLI:
 
 ```shell
 flwr run . --run-config="num-server-rounds=5 fraction-fit=0.333"
