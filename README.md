@@ -10,6 +10,19 @@ This is the Flower tutorial repository for PyCon DE &amp; PyData 2025 talk "[The
 3. [Deploy and run a Flower App using the Deployment Runtime and Docker](#part-3---flower-deployment-runtime-on-a-remote-superlink)
 4. [(Bonus) Deploy SuperNodes and a SuperLink with node and TLS authentication](#part-4---flower-deployment-runtime-with-tls-and-node-authentication)
 
+**Update 2025-10-27:** The YouTube recording of this tutorial is now live! You can follow along by watching it here:
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=rzQNmNX2u_E">
+    <img src="https://img.youtube.com/vi/rzQNmNX2u_E/0.jpg" 
+         alt="Tutorial: The Future of AI is Federated by Chong Shen Ng" 
+         width="50%"
+         style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+  </a>
+  <br>
+  <em>Click the image above to watch the tutorial on YouTube</em>
+</div>
+
 At the end of this README, we've included a [`flwr` CLI cheatsheet](#flwr-cli-cheatsheet) to summarize the basic commands used in this tutorial.
 
 Let's get started 🚀!
